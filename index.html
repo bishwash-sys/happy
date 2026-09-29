@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For My Forever Love</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lora:wght@400;600;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a0208;--bg2:#3a0713;--cream:#f7d9b4;--rose:#e8a598;--gold:#ffd9a3;--line:rgba(247,217,180,.45)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:radial-gradient(ellipse at 50% 20%,var(--bg2),var(--bg) 70%) fixed;color:var(--cream);font-family:'Lora',Georgia,serif;overflow-x:hidden}
+#hearts{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.h{position:absolute;bottom:-30px;color:#c4122f;opacity:.75;animation:rise linear forwards}
+@keyframes rise{to{transform:translateY(-115vh) rotate(25deg);opacity:0}}
+.step{position:relative;z-index:1;min-height:100%;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;gap:18px}
+.step.on{display:flex;animation:in 1.2s ease both}
+@keyframes in{from{opacity:0;filter:blur(8px)}to{opacity:1;filter:none}}
+.script{font-family:'Great Vibes',cursive;font-weight:400}
+.tag{font-size:.8rem;letter-spacing:.12em;color:var(--rose);font-style:italic}
+h1.script{font-size:clamp(3rem,10vw,5rem);color:var(--rose);line-height:1.1}
+h2{font-size:clamp(1.6rem,5vw,2.4rem);color:var(--gold);max-width:640px;line-height:1.4}
+.sub{font-style:italic;font-size:.95rem;opacity:.85}
+.hero{width:min(360px,80vw);aspect-ratio:16/10;object-fit:cover;border:2px solid var(--gold);box-shadow:0 0 40px rgba(255,120,120,.25)}
+.btn{font:600 .8rem 'Lora',serif;letter-spacing:.14em;text-transform:uppercase;color:var(--cream);background:transparent;border:1px solid var(--line);padding:14px 26px;cursor:pointer;transition:.3s}
+.btn:hover,.btn:focus-visible{background:var(--gold);color:#3a0713;box-shadow:0 0 24px rgba(255,217,163,.6);outline:none}
+.btn.solid{background:var(--gold);color:#3a0713;box-shadow:0 0 24px rgba(255,217,163,.45)}
+.row{display:flex;flex-wrap:wrap;gap:18px;justify-content:center}
+.card{width:min(190px,42vw);background:rgba(255,255,255,.04);padding:8px 8px 12px;border:1px solid rgba(247,217,180,.15)}
+.card .ph{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:linear-gradient(135deg,#7a1b2e,#2a0710);}
+.card p{margin-top:8px;font-size:.9rem}
+.card p.script{font-size:1.5rem;color:var(--cream)}
+.ph-box{width:100%;aspect-ratio:3/4;display:grid;place-items:center;font-size:2.4rem;background:linear-gradient(135deg,#7a1b2e,#2a0710)}
+.gallery .card{width:min(230px,44vw)}
+.gallery .card img{aspect-ratio:3/4}
+#msg{width:min(520px,92vw);min-height:260px;border:1px solid var(--line);padding:28px;text-align:left;font-size:1.25rem;line-height:1.5;white-space:pre-wrap;background:rgba(0,0,0,.25);font-family:'Lora',serif}
+.quiz{width:min(400px,92vw);border:1px solid var(--line);padding:28px;background:rgba(255,255,255,.04)}
+.quiz h3{color:var(--gold);font-size:1.25rem;margin-bottom:18px;line-height:1.4}
+.opt{display:block;width:100%;margin:8px 0;padding:11px;font:.85rem 'Quicksand',sans-serif;color:var(--cream);background:transparent;border:1px solid rgba(247,217,180,.25);cursor:pointer;transition:.2s}
+.opt:hover{background:var(--rose);color:#3a0713}
+.opt.wrong{background:rgba(232,165,152,.9);color:#3a0713;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.key{font-size:2.2rem;color:var(--cream);border:1px solid var(--line);padding:22px 28px;background:rgba(255,255,255,.04)}
+.cert{width:min(460px,92vw);border:3px double var(--cream);padding:32px 24px;box-shadow:0 0 40px rgba(255,140,140,.35),inset 0 0 30px rgba(255,140,140,.12);background:rgba(20,2,8,.6);display:flex;flex-direction:column;gap:12px}
+.cert .script{font-size:2.4rem;color:var(--cream)}
+.cert h2{margin:auto}
+.cert p{font-size:.9rem}
+.mute{position:fixed;top:14px;right:14px;z-index:5;background:none;border:1px solid var(--line);color:var(--cream);border-radius:50%;width:38px;height:38px;cursor:pointer;display:none}
+@media (prefers-reduced-motion:reduce){.h{display:none}.step.on{animation:none}}
+</style>
+</head>
+<body>
+<div id="hearts"></div>
+<button class="mute" id="mute" aria-label="Toggle music">♪</button>
+<main id="app"></main>
+
+<script>
+/* ============ EDIT THIS SECTION ============
+   Put your own photos/audio in the same folder as this file and change the paths below.
+   Leave a path empty ("") to show a heart placeholder. */
+const CONFIG = {
+  herName: "My Love",
+  heroImage: "images/hero.jpg",                     // e.g. "photos/hero.jpg"
+  music: "images/song.mp3",                         // e.g. "music/song.mp3" (plays after she taps "Open my gift")
+  landing: { tag: "A Story Written in the Stars", title: "Happy Birthday", sub: "A journey through my heart, just for you...", button: "Open my gift" },
+  songsTitle: "The Soundtracks That Remind Me of Us",
+  songs: [ // cover = image path, link = optional Spotify/YouTube URL
+    { title: "At My Worst", cover: "images/worst.jpg", link: "" },
+    { title: "Perfect", cover: "images/view.jpg", link: "" },
+    { title: "Until I Found You", cover: "images/found.jpg", link: "" }
+  ],
+  galleryTitle: "Our Memories",
+  photos: [ // src = image path, caption shown under the photo
+    { src: "images/beginning.jpg", caption: "The beginning." },
+    { src: "images/smile.jpg", caption: "That smile." },
+    { src: "images/cozy.jpg", caption: "Cozy moments." },
+    { src: "images/love.jpg", caption: "Infinite love." },
+    { src: "images/view.jpg", caption: "My favorite view." },
+    { src: "images/always.jpg", caption: "Always you." }
+  ],
+  message: "To My Everything,\n\nI built this space because words alone aren't enough to describe how special you are to me. You are my home, my laughter, and my favorite adventure.\n\nThank you for choosing me every single day. Happy Birthday, my beautiful love.\n\nForever Yours,\nMe.",
+  quiz: [ // answer = index of the correct option (0 = first)
+    { q: "What is my absolute favorite thing about you?", options: ["Your Heart", "Everything", "Your Kindness", "Your Smile"], answer: 1 },
+    { q: "Where is my favorite place in the world?", options: ["Paris", "The Mountains", "Wherever you are", "The Beach"], answer: 2 },
+    { q: "How much do I love you?", options: ["A lot", "Infinity", "More than words say", "To the moon"], answer: 2 }
+  ],
+  win: "You hold the key to my heart! ❤️",
+  cert: { head: "Certificate of My Heart", title: "The Owner of My World", text: "Presented to You, for stealing my heart and making every second of my existence a beautiful dream.", sign: "I Love You! ❤️", image: "" }
+};
+/* ============ END OF EDIT SECTION ============ */
+
+const $ = (h) => { const d = document.createElement('div'); d.innerHTML = h.trim(); return d.firstChild; };
+const img = (src, cls, alt) => src ? `<img class="${cls}" src="${src}" alt="${alt || ''}">` : `<div class="${cls} ph-box">💗</div>`;
+const app = document.getElementById('app');
+const steps = [];
+let audio = null;
+
+/* floating hearts */
+const heartBox = document.getElementById('hearts');
+setInterval(() => {
+  const h = document.createElement('span');
+  h.className = 'h'; h.textContent = '♥';
+  h.style.left = Math.random() * 100 + 'vw';
+  h.style.fontSize = 10 + Math.random() * 18 + 'px';
+  h.style.animationDuration = 6 + Math.random() * 7 + 's';
+  heartBox.appendChild(h);
+  setTimeout(() => h.remove(), 13000);
+}, 350);
+
+function go(i) {
+  steps.forEach((s, k) => s.classList.toggle('on', k === i));
+  window.scrollTo(0, 0);
+}
+function add(html) { const el = $(html); app.appendChild(el); steps.push(el); return el; }
+function next(el, sel, i) { el.querySelector(sel).addEventListener('click', () => go(i)); }
+
+/* 0 landing */
+const L = CONFIG.landing;
+let s = add(`<section class="step on">
+  ${img(CONFIG.heroImage, 'hero', 'Us')}
+  <p class="tag">${L.tag}</p>
+  <h1 class="script">${L.title}</h1>
+  <h2>To ${CONFIG.herName}</h2>
+  <p class="sub">${L.sub}</p>
+  <button class="btn solid">${L.button}</button></section>`);
+s.querySelector('button').addEventListener('click', () => {
+  if (CONFIG.music) {
+    audio = new Audio(CONFIG.music); audio.loop = true; audio.play().catch(() => {});
+    const m = document.getElementById('mute'); m.style.display = 'block';
+    m.onclick = () => { audio.paused ? audio.play() : audio.pause(); };
+  }
+  go(1);
+});
+
+/* 1 songs */
+s = add(`<section class="step"><p class="tag">Step I: Set the Atmosphere</p><h2>${CONFIG.songsTitle}</h2>
+  <div class="row">${CONFIG.songs.map(x => `<a class="card" ${x.link ? `href="${x.link}" target="_blank" rel="noopener"` : ''} style="color:inherit;text-decoration:none">${img(x.cover, 'ph', x.title)}<p>${x.title}</p></a>`).join('')}</div>
+  <button class="btn">View our scrapbook</button></section>`);
+next(s, 'button', 2);
+
+/* 2 gallery */
+s = add(`<section class="step"><p class="tag">Step II: Our Scrapbook</p><h2>${CONFIG.galleryTitle}</h2>
+  <div class="row gallery">${CONFIG.photos.map(p => `<figure class="card">${img(p.src, 'ph', p.caption)}<p class="script">${p.caption}</p></figure>`).join('')}</div>
+  <button class="btn solid">Read my note</button></section>`);
+next(s, 'button', 3);
+
+/* 3 message (typewriter) */
+s = add(`<section class="step"><p class="tag">Step III: A Message for You</p><div id="msg"></div><button class="btn">One last thing</button></section>`);
+next(s, 'button', 4);
+let typed = false;
+const observer = new MutationObserver(() => {
+  if (s.classList.contains('on') && !typed) {
+    typed = true;
+    const box = s.querySelector('#msg'); let i = 0;
+    const fast = matchMedia('(prefers-reduced-motion:reduce)').matches;
+    (function tick() { box.textContent = CONFIG.message.slice(0, i++); if (i <= CONFIG.message.length) setTimeout(tick, fast ? 0 : 45); })();
+  }
+});
+observer.observe(s, { attributes: true, attributeFilter: ['class'] });
+
+/* 4 quiz */
+const quizEl = add(`<section class="step"><p class="tag">Step IV: The Love Quiz</p><div class="quiz" id="quiz"></div></section>`);
+let qi = 0;
+function showQ() {
+  const q = CONFIG.quiz[qi], box = quizEl.querySelector('#quiz');
+  box.innerHTML = `<h3>${q.q}</h3>` + q.options.map((o, k) => `<button class="opt" data-k="${k}">${o}</button>`).join('');
+  box.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+    if (+b.dataset.k === q.answer) {
+      if (++qi < CONFIG.quiz.length) showQ(); else winScreen();
+    } else {
+      const old = b.textContent; b.classList.add('wrong'); b.textContent = 'Try again, Love!';
+      setTimeout(() => { b.classList.remove('wrong'); b.textContent = old; }, 900);
+    }
+  }));
+}
+function winScreen() {
+  quizEl.querySelector('#quiz').outerHTML = `<div class="quiz"><p class="script key" style="border:0;padding:0;font-size:2.4rem">${CONFIG.win}</p></div><button class="btn solid" id="unlock">Unlock surprise</button>`;
+  quizEl.querySelector('#unlock').addEventListener('click', () => go(5));
+}
+showQ();
+
+/* 5 certificate */
+const C = CONFIG.cert;
+add(`<section class="step">${C.image ? img(C.image, 'hero') : ''}
+  <div class="cert"><p class="script">${C.head}</p><h2>${C.title}</h2><p>${C.text}</p><p class="script" style="font-size:3rem">${C.sign}</p></div></section>`);
+</script>
+</body>
+</html>
